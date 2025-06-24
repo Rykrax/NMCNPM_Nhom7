@@ -1,0 +1,22 @@
+{
+  "name": "nmcnpm_nhom7",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rykrax/NMCNPM_Nhom7.git"
+  },
+  "author": "Rykrax",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rykrax/NMCNPM_Nhom7/issues"
+  },
+  "homepage": "https://github.com/Rykrax/NMCNPM_Nhom7#readme",
+  "description": "",
+  "dependencies": {
+    "express": "5.1.0"
+  }
+}
