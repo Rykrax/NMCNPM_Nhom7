@@ -85,7 +85,7 @@ create table tblDiscountedProducts (
 go
 
 create table tblInvoices (
-	idInvoiceID int identity(1,1) primary key,  -- Mã hóa đơn (PK)
+	iInvoiceID int identity(1,1) primary key,  -- Mã hóa đơn (PK)
     iEmployeeID int,							-- Mã nhân viên (FK from tblEmployees)
     iCustomerID int,							-- Mã khách hàng (FK from tblCustomers)
     dCreatedDate datetime,						-- Ngày lập
@@ -104,7 +104,7 @@ create table tblInvoiceDetails (
     iQuantity int default 0,				   -- Số lượng
 	fUnitPrice decimal(18,2),					   -- Đơn giá
 
-	constraint FK_InvoiceDetail_Invoice foreign key (iInvoiceID) references tblInvoices(idInvoiceID),
+	constraint FK_InvoiceDetail_Invoice foreign key (iInvoiceID) references tblInvoices(iInvoiceID),
     constraint FK_InvoiceDetail_Product foreign key (iProductID) references tblProducts(iProductID)
 )
 go
