@@ -56,6 +56,6 @@ public class EmployeeModel
     public string? SStatus { get; set; } = "active";
 
     [ForeignKey("IRoleID")]
-    [InverseProperty("TblEmployees")]
+    [InverseProperty("Employees")]
     public virtual RoleModel? IRole { get; set; }
 }

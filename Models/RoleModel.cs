@@ -18,5 +18,5 @@ public class RoleModel
     public string SRoleName { get; set; } = null!;
 
     [InverseProperty("IRole")]
-    public virtual ICollection<EmployeeModel> TblEmployee { get; set; } = new List<EmployeeModel>();
+    public virtual ICollection<EmployeeModel> Employees { get; set; } = new List<EmployeeModel>();
 }
