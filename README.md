@@ -18,7 +18,7 @@ Mở SQL Server Management Studio (SSMS) và đăng nhập vào SQL Server (nế
 Mở file script MT-Mart_script.sql hoặc chạy các lệnh CREATE TABLE theo mô hình dữ liệu của bạn.
 
 ### 3. Cấu hình `appsettings.json`
-Trong thư mục **Nhom12_Ewallet**, tạo tệp `appsettings.json` và thêm nội dung sau:
+Trong thư mục **NMCNPM_Nhom7**, tạo tệp `appsettings.json` và thêm nội dung sau:
 ```json
 {
   "ConnectionStrings": {
