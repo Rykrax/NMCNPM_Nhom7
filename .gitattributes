@@ -1,0 +1,7 @@
+# Cho tất cả các loại file văn bản dùng LF (Linux-style)
+* text=auto
+
+# Đặt riêng file JS, CSS, HTML dùng LF (nếu dùng Libman hoặc copy từ Linux)
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
