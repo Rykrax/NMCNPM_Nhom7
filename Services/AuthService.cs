@@ -48,9 +48,9 @@ namespace NMCNPM_Nhom7.Services
             var user = await _userRepo.GetByPhoneAsync(model.PhoneNumber);
             if (user == null) return null;
 
-            // if (!PasswordHasher.Verify(model.Password, user.SPasswordHash))
-            //     return null;
-            if (model.Password != user.SPasswordHash) return null;
+            if (!PasswordHasher.Verify(model.Password, user.SPasswordHash))
+                return null;
+            // if (model.Password != user.SPasswordHash) return null;
             return user;
         }
     }
