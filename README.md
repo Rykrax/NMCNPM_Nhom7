@@ -1,7 +1,7 @@
 # MT Mart(Quản lý bán hàng) - ASP.NET Core MVC
 
 ## Yêu cầu hệ thống
-- **.NET 8.0 hoặc mới hơn**
+- **.NET 9.0 hoặc mới hơn**
 - **SQL Server**
 - **Visual Studio 2022**
 
