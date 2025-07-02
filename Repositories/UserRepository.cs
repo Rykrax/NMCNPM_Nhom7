@@ -28,6 +28,12 @@ namespace NMCNPM_Nhom7.Repositoties
                                 .FirstOrDefaultAsync(e => e.IEmployeeID == id);
         }
 
+        public async Task<EmployeeModel?> GetByPhoneAsync(string phoneNumber)
+        {
+            return await _context.Employees
+                         .FirstOrDefaultAsync(e => e.SPhone == phoneNumber);
+        }
+
         public async Task<EmployeeModel> CreateAsync(EmployeeModel employee)
         {
             _context.Employees.Add(employee);
@@ -68,5 +74,6 @@ namespace NMCNPM_Nhom7.Repositoties
         {
             return await _context.Employees.AnyAsync(e => e.IEmployeeID == id);
         }
+
     }
 }

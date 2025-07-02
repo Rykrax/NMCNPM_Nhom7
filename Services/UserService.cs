@@ -36,10 +36,5 @@ namespace NMCNPM_Nhom7.Services
         {
             return _userRepo.DeleteAsync(id);
         }
-
-        public Task<EmployeeModel?> LoginAsync(LoginDTO model)
-        {
-            
-        }
     }
 }
