@@ -1,49 +1,97 @@
+@model LoginDTO
 @{
     ViewData["Title"] = "Đăng nhập";
 	Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script>
+		let clearAlert = () => {
+			setTimeout(function () {
+				$("#alertMessage").addClass("d-none").removeClass("alert-success alert-danger");
+				$("#alertText").text(""); 
+			}, 3000);
+		};
 
-<div class="user-containter">
-	<div class="user-box">
-		<h2 class="text-center mb-4">Đăng nhập</h2>
-		@if (TempData["ErrorMessage"] != null)
-		{
-			<div class="alert alert-danger alert-dismissible fade show" role="alert">
-				<strong>@TempData["ErrorMessage"]</strong>
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-			</div>
-		}
+		document.querySelector("form").addEventListener("submit", async function (e) {
+			e.preventDefault();
 
-		<form asp-action="Login" method="post">
-			<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-			@* <div class="mb-2">
-				<label asp-for="PhoneNumber" class="form-label"></label>
-				<input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại" type="search"/>
-				<span asp-validation-for="PhoneNumber" class="text-danger mt-1"></span>
-			</div>
-			<div class="mb-2">
-				<label asp-for="Password" class="form-label"></label>
-				<input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" />
-				<span asp-validation-for="Password" class="text-danger mt-1"></span>
-			</div> *@
-			<div class="float-end">
-				<a class="text-decoration-none">Quên mật khẩu?</a>
-			</div>
-			<input type="submit" class="btn btn-primary w-100 p-2 mt-2" value="Đăng nhập" />
-			<p class="text-center mt-2">
-				Chưa có tài khoản? <a asp-controller="User" asp-action="Register" class="text-decoration-none">Đăng ký</a>
-			</p>
-			<div class="text-center">
-				<a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Quay lại</a>
-			</div>
+			const dto = {
+				phoneNumber: document.getElementById("phoneNumber").value,
+				password: document.getElementById("password").value
+			};
 
-		</form>
-	</div>
+			const res = await fetch("/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(dto)
+			});
+
+			const data = await res.json();
+
+			if (res.ok) {
+				console.log(data);
+				$("#alertMessage")
+					.removeClass("d-none alert-danger")
+					.addClass("alert-success")
+					.text("Đăng nhập thành công!");
+				clearAlert();
+			} else {
+				 $("#alertMessage")
+					.removeClass("d-none alert-success")
+					.addClass("alert-danger")
+					.text(data.message);
+				clearAlert();
+			}
+		});	
+	</script>
+
+}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="bg-white p-4 rounded shadow-sm" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">Đăng nhập</h2>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>@TempData["ErrorMessage"]</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            @* <div asp-validation-summary="ModelOnly" class="alert alert-danger">Lỗi gì đó</div> *@
+			<div id="alertMessage" class="alert d-none" role="alert"></div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại" id="phoneNumber"/>
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mật khẩu</label>
+                <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" type="password" id="password"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 text-end">
+                <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+
+            <p class="text-center mt-3 mb-1">
+                Chưa có tài khoản?
+                <a asp-controller="User" asp-action="Register" class="text-decoration-none">Đăng ký</a>
+            </p>
+            <div class="text-center">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none">Quay lại</a>
+            </div>
+        </form>
+    </div>
 </div>
 
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-}

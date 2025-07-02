@@ -51,7 +51,12 @@ public class AuthController : Controller
     {
         var user = await _authService.LoginAsync(dto);
         if (user == null)
-            return Unauthorized("Email hoặc mật khẩu không chính xác!");
+            return Unauthorized(new
+            {
+                status = 401,
+                message = "Số điện thoại không đúng"
+            });
+
 
         return Ok(new
         {
