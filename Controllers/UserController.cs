@@ -13,13 +13,6 @@ public class UserController : Controller
         _logger = logger;
     }
 
-    [HttpGet("/login")]
-    public IActionResult Login()
-    {
-        return View();
-    }
-
-
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

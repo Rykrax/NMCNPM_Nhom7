@@ -16,8 +16,9 @@ public class RegisterDTO
     [Required(ErrorMessage = "Số điện thoại không được để trống")]
     [RegularExpression(@"^0(3[2-9]|5[2689]|7[06-9]|8[1-5]|9[0-9])\d{7}$",
         ErrorMessage = "Số điện thoại không hợp lệ")]
-    public required string Phone { get; set; }
+    public required string PhoneNumber { get; set; }
 
+    [Required(ErrorMessage = "Email không được để trống")]
     [EmailAddress(ErrorMessage = "Email không hợp lệ")]
     [MaxLength(255)]
     public string? Email { get; set; }

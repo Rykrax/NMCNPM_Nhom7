@@ -1,0 +1,150 @@
+@model RegisterDTO
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let resetField = () => {
+            $("#fullName").val('');
+            $("#phoneNumber").val('');
+            $("#cccd").val('');
+            $("#birthDay").val('');
+            $("#email").val('');
+            $("#address").val('');
+            $("#gender").val('true');
+            $("#password").val('');
+            $("#alertMessage").addClass("d-none").removeClass("alert-danger alert-success").text("");
+            $("span.text-danger").text("");
+        };
+
+        let clearAlert = () => {
+			setTimeout(function () {
+				$("#alertMessage").addClass("d-none").removeClass("alert-success alert-danger");
+				$("#alertText").text(""); 
+			}, 3000);
+		};
+
+		document.querySelector("form").addEventListener("submit", async function (e) {
+			e.preventDefault();
+
+			const dto = {
+                fullName: $("#fullName").val(),
+				phoneNumber: $("#phoneNumber").val(),
+                cccd: $("#cccd").val(),
+                birthDay: $("#birthDay").val(),
+                email: $("#email").val(),
+                address: $("#address").val(),
+                gender: $("[name='Gender']").val() === "true",
+				password: $("#password").val()
+			};
+            @* console.log(dto); *@
+
+			const res = await fetch("/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(dto)
+			});
+
+			const data = await res.json();
+
+			if (res.ok) {
+				console.log(data);
+				$("#alertMessage")
+					.removeClass("d-none alert-danger")
+					.addClass("alert-success")
+					.text("Đăng ký thành công!");
+                resetField();
+				clearAlert();
+			} else {
+				 $("#alertMessage")
+					.removeClass("d-none alert-success")
+					.addClass("alert-danger")
+					.text(data.message);
+                @* resetField(); *@
+				clearAlert();
+			}
+		});	
+    </script>
+}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="bg-white p-4 rounded shadow-sm" style="width: 100%; max-width: 600px;">
+        <h2 class="text-center mb-4">Đăng ký</h2>
+
+        <form asp-action="Register" method="post">
+            <div id="alertMessage" class="alert d-none" role="alert"></div>
+            <div class="row">
+                <!-- Cột trái -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">Họ tên</label>
+                        <input asp-for="FullName" class="form-control" placeholder="Nhập họ tên" id="fullName"/>
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại" id="phoneNumber"/>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CCCD" class="form-label">Căn cước công dân</label>
+                        <input asp-for="CCCD" class="form-control" placeholder="Nhập căn cước công dân" id="cccd"/>
+                        <span asp-validation-for="CCCD" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BirthDate" class="form-label">Ngày sinh</label>
+                        <input asp-for="BirthDate" type="date" class="form-control" id="birthDay"/>
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Cột phải -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Nhập email" id="email"/>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Địa chỉ</label>
+                        <input asp-for="Address" class="form-control" placeholder="Nhập địa chỉ (nếu có)" id="address"/>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Gender" class="form-label">Giới tính</label>
+                        <select asp-for="Gender" class="form-select" id="gender">
+                            <option value="true">Nam</option>
+                            <option value="false">Nữ</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Mật khẩu</label>
+                        <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" id="password"/>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Đăng ký</button>
+
+            <p class="text-center mt-3 mb-1">
+                Đã có tài khoản? <a asp-controller="Auth" asp-action="Login" class="text-decoration-none">Đăng nhập</a>
+            </p>
+            <div class="text-center">
+                <a asp-controller="Auth" asp-action="Login" class="text-decoration-none">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>

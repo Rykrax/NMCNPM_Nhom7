@@ -34,6 +34,18 @@ namespace NMCNPM_Nhom7.Repositoties
                          .FirstOrDefaultAsync(e => e.SPhone == phoneNumber);
         }
 
+        public async Task<EmployeeModel?> GetByCCCDAsync(string cccd)
+        {
+            return await _context.Employees
+                         .FirstOrDefaultAsync(e => e.SCCCD == cccd);
+        }
+
+        public async Task<EmployeeModel?> GetByEmailAsync(string email)
+        {
+            return await _context.Employees
+                         .FirstOrDefaultAsync(e => e.SEmail == email);
+        }
+
         public async Task<EmployeeModel> CreateAsync(EmployeeModel employee)
         {
             _context.Employees.Add(employee);
@@ -74,6 +86,5 @@ namespace NMCNPM_Nhom7.Repositoties
         {
             return await _context.Employees.AnyAsync(e => e.IEmployeeID == id);
         }
-
     }
 }

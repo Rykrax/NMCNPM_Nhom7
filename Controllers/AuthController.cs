@@ -12,39 +12,49 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    // [HttpPost("register")]
-    // public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
-    // {
-    //     var result = await _authService.RegisterAsync(dto);
-    //     if (result == null)
-    //         return BadRequest("Email đã tồn tại");
+    
+    [HttpGet("/register")]
+    public IActionResult Register()
+    {
+        return View();
+    }
 
-    //     return Ok(result);
-    // }
+    [HttpGet("/login")]
+    public IActionResult Login()
+    {
+        return View();
+    }
 
     [HttpPost("/register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO model)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ModelState); 
+            return BadRequest(ModelState);
 
-        var user = await _authService.RegisterAsync(model);
-
-        if (user == null)
-            return Conflict(new { message = "Số điện thoại đã được đăng ký." }); // 409 Conflict
-
-        return Ok(new
+        try
         {
-            status = 200,
-            message = "Đăng ký thành công",
-            data = new
+            var user = await _authService.RegisterAsync(model);
+            if (user == null)
+                return StatusCode(500, new { message = "Lỗi khi tạo người dùng." });
+
+            return Ok(new
             {
-                user.IEmployeeID,
-                user.SFullName,
-                user.SPhone
-            }
-        });
+                status = 200,
+                message = "Đăng ký thành công",
+                data = new
+                {
+                    user.IEmployeeID,
+                    user.SFullName,
+                    user.SPhone
+                }
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return Conflict(new { status = 409, message = ex.Message });
+        }
     }
+
 
     [HttpPost("/login")]
     public async Task<IActionResult> Login([FromBody] LoginDTO dto)
