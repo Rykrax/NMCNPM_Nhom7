@@ -14,6 +14,13 @@
 			}, 3000);
 		};
 
+		let showAlert = (selector, removeClass, addClass, text) => {
+			$(selector)
+					.removeClass(removeClass)
+					.addClass(addClass)
+					.text(text);
+		};
+
 		document.querySelector("form").addEventListener("submit", async function (e) {
 			e.preventDefault();
 
@@ -34,16 +41,10 @@
 
 			if (res.ok) {
 				console.log(data);
-				$("#alertMessage")
-					.removeClass("d-none alert-danger")
-					.addClass("alert-success")
-					.text("Đăng nhập thành công!");
+				showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng nhập thành công!");
 				clearAlert();
 			} else {
-				 $("#alertMessage")
-					.removeClass("d-none alert-success")
-					.addClass("alert-danger")
-					.text(data.message);
+				showAlert("#alertMessage", "d-none alert-success", "alert-danger", data.message);
 				clearAlert();
 			}
 		});	

@@ -64,7 +64,7 @@ public class AuthController : Controller
             return Unauthorized(new
             {
                 status = 401,
-                message = "Số điện thoại không đúng"
+                message = "Số điện thoại hoặc mật khẩu không chính xác"
             });
 
 
@@ -72,7 +72,7 @@ public class AuthController : Controller
         {
             status = 200,
             message = "Đăng nhập thành công",
-            data = user
+            // data = user
         });
     }
 }
