@@ -22,7 +22,7 @@ Trong thư mục **NMCNPM_Nhom7**, tạo tệp `appsettings.json` và thêm nộ
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=Ewallet;User Id=YOUR_USERNAME;Password=YOUR_PASSWORD;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "Server=YOUR_SERVER;Database=YOUR_DATABASE;User Id=YOUR_USERNAME;Password=YOUR_PASSWORD;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
   },
   "Logging": {
     "LogLevel": {
@@ -33,7 +33,7 @@ Trong thư mục **NMCNPM_Nhom7**, tạo tệp `appsettings.json` và thêm nộ
   "AllowedHosts": "*"
 }
 ```
-Thay thế `YOUR_SERVER`, `YOUR_USERNAME`, và `YOUR_PASSWORD` bằng thông tin SQL Server của bạn, nếu không đăng nhập thì xóa `User Id=YOUR_USERNAME;Password=YOUR_PASSWORD`.
+Thay thế `YOUR_SERVER`, `YOUR_DATABASE`, `YOUR_USERNAME`, và `YOUR_PASSWORD` bằng thông tin SQL Server của bạn, nếu không đăng nhập thì xóa `User Id=YOUR_USERNAME;Password=YOUR_PASSWORD`.
 
 ### 4. Chạy ứng dụng
 Nhấn `Ctrl + F5` để chạy dự án hoặc sử dụng lệnh:

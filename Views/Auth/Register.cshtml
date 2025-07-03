@@ -37,6 +37,11 @@
 		document.querySelector("form").addEventListener("submit", async function (e) {
 			e.preventDefault();
 
+            const form = $(this);
+			if (!form.valid()) {
+				return;
+			}
+
 			const dto = {
                 fullName: $("#fullName").val(),
 				phoneNumber: $("#phoneNumber").val(),
@@ -142,9 +147,9 @@
             <p class="text-center mt-3 mb-1">
                 Đã có tài khoản? <a asp-controller="Auth" asp-action="Login" class="text-decoration-none">Đăng nhập</a>
             </p>
-            <div class="text-center">
+            @* <div class="text-center">
                 <a asp-controller="Auth" asp-action="Login" class="text-decoration-none">Quay lại</a>
-            </div>
+            </div> *@
         </form>
     </div>
 </div>
