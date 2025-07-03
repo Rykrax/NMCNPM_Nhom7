@@ -7,11 +7,11 @@
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
 	<script>
-		let clearAlert = () => {
+		let clearAlert = (time) => {
 			setTimeout(function () {
 				$("#alertMessage").addClass("d-none").removeClass("alert-success alert-danger");
 				$("#alertText").text(""); 
-			}, 3000);
+			}, time);
 		};
 
 		let showAlert = (selector, removeClass, addClass, text) => {
@@ -47,10 +47,12 @@
 			if (res.ok) {
 				console.log(data);
 				showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng nhập thành công!");
-				clearAlert();
+				setTimeout(() => {
+					window.location.href = "/home";
+				}, 2500);
 			} else {
 				showAlert("#alertMessage", "d-none alert-success", "alert-danger", data.message);
-				clearAlert();
+				clearAlert(3000);
 			}
 		});	
 	</script>
