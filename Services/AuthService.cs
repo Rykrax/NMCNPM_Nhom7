@@ -1,5 +1,5 @@
 using NMCNPM_Nhom7.Models;
-using NMCNPM_Nhom7.Repositoties;
+using NMCNPM_Nhom7.Repositories;
 using NMCNPM_Nhom7.Services.Interfaces;
 using NMCNPM_Nhom7.Helpers;
 
@@ -14,7 +14,7 @@ namespace NMCNPM_Nhom7.Services
             _userRepo = userRepo;
         }
 
-       public async Task<EmployeeModel?> RegisterAsync(RegisterDTO model)
+        public async Task<EmployeeModel?> RegisterAsync(RegisterDTO model)
         {
             if (!string.IsNullOrEmpty(model.PhoneNumber))
             {

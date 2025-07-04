@@ -1,53 +1,81 @@
 using Microsoft.AspNetCore.Mvc;
 using NMCNPM_Nhom7.Data;
 using Microsoft.EntityFrameworkCore;
+using NMCNPM_Nhom7.DTOs;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using NMCNPM_Nhom7.Services.Interfaces;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProductsController : ControllerBase
+public class ProductController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IProductService _productService;
 
-    public ProductsController(AppDbContext context)
+    public ProductController(AppDbContext context, IProductService productService)
     {
         _context = context;
+        _productService = productService;
+    }
+
+    [HttpGet("products")]
+    public IActionResult Index()
+    {
+        var products = _context.Products.ToList();
+        return View(products);
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductModel>>> GetAll()
-        => await _context.Products.ToListAsync();
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProductModel>> GetById(int id)
+    public async Task<IActionResult> Create()
     {
-        var product = await _context.Products.FindAsync(id);
-        return product == null ? NotFound() : Ok(product);
+        var viewModel = new CreateProductDTO
+        {
+            SProductName = string.Empty,
+            ICategoryID = 0,
+            FPrice = 0,
+            IQuantity = 0,
+            IUnitID = 0,
+            ISupplierID = 0,
+            Categories = await _context.ProductCategories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.ICategoryID.ToString(),
+                    Text = c.SCategoryName
+                }).ToListAsync(),
+            Units = await _context.Units
+                .Select(u => new SelectListItem
+                {
+                    Value = u.IUnitID.ToString(),
+                    Text = u.SUnitName
+                }).ToListAsync(),
+            Suppliers = await _context.Suppliers
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ISupplierID.ToString(),
+                    Text = s.SCompanyName
+                }).ToListAsync()
+        };
+        return View(viewModel);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductModel>> Create(ProductModel product)
+    public async Task<IActionResult> Create([FromBody] CreateProductDTO model)
     {
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = product.IProductID }, product);
-    }
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ProductModel product)
-    {
-        if (id != product.IProductID) return BadRequest();
-        _context.Entry(product).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
+        var product = new ProductModel
+        {
+            SProductName = model.SProductName,
+            ICategoryID = model.ICategoryID,
+            FPrice = model.FPrice,
+            IQuantity = model.IQuantity,
+            IUnitID = model.IUnitID,
+            ISupplierID = model.ISupplierID
+        };
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null) return NotFound();
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        await _productService.CreateProductAsync(product);
+
+        return Json(new { success = true });
     }
 }

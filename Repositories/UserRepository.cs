@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NMCNPM_Nhom7.Data;
 using NMCNPM_Nhom7.Models;
 
-namespace NMCNPM_Nhom7.Repositoties
+namespace NMCNPM_Nhom7.Repositories
 {
     public class UserRepository : IUserRepository
     {

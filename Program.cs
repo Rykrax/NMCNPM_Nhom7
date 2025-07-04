@@ -1,14 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using NMCNPM_Nhom7.Data;
-using NMCNPM_Nhom7.Repositoties;
+using NMCNPM_Nhom7.Repositories;
 using NMCNPM_Nhom7.Services;
 using NMCNPM_Nhom7.Services.Interfaces;
+using NMCNPM_Nhom7.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -1,6 +1,6 @@
 using NMCNPM_Nhom7.Models;
 
-namespace NMCNPM_Nhom7.Repositoties
+namespace NMCNPM_Nhom7.Repositories
 {
     public interface IUserRepository
     {

@@ -1,0 +1,87 @@
+@model NMCNPM_Nhom7.DTOs.CreateProductDTO
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm mới";
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("form").on("submit", function (e) {
+                e.preventDefault(); // Prevent default form submission
+
+                var dto = {
+                    SProductName: $("#SProductName").val(),
+                    ICategoryID: $("#ICategoryID").val(),
+                    FPrice: parseFloat($("#FPrice").val()),
+                    IQuantity: parseInt($("#IQuantity").val()),
+                    IUnitID: $("#IUnitID").val(),
+                    ISupplierID: $("#ISupplierID").val()
+                };
+
+                console.log(dto); // For debugging
+
+                fetch("/Product/Create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dto)
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert("Sản phẩm đã được thêm thành công!");
+                            //window.location.href = "/products";  Redirect to product list
+                        } else {
+                            alert("Có lỗi xảy ra: " + result.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+        });
+    </script>
+
+}
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="SProductName">Tên sản phẩm</label>
+        <input asp-for="SProductName" class="form-control" />
+        <span asp-validation-for="SProductName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ICategoryID">Loại sản phẩm</label>
+        <select asp-for="ICategoryID" asp-items="Model.Categories" class="form-control"></select>
+        <span asp-validation-for="ICategoryID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FPrice">Giá sản phẩm</label>
+        <input asp-for="FPrice" class="form-control" />
+        <span asp-validation-for="FPrice" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IQuantity">Số lượng sản phẩm</label>
+        <input asp-for="IQuantity" class="form-control" />
+        <span asp-validation-for="IQuantity" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IUnitID">Đơn vị tính</label>
+        <select asp-for="IUnitID" asp-items="Model.Units" class="form-control"></select>
+        <span asp-validation-for="IUnitID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ISupplierID">Nhà cung cấp</label>
+        <select asp-for="ISupplierID" asp-items="Model.Suppliers" class="form-control"></select>
+        <span asp-validation-for="ISupplierID" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Thêm sản phẩm</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Quay lại</a>
+</form>

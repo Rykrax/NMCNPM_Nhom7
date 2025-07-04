@@ -1,5 +1,5 @@
 using NMCNPM_Nhom7.Models;
-using NMCNPM_Nhom7.Repositoties;
+using NMCNPM_Nhom7.Repositories;
 using NMCNPM_Nhom7.Services.Interfaces;
 
 namespace NMCNPM_Nhom7.Services
