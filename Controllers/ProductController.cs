@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using NMCNPM_Nhom7.DTOs;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NMCNPM_Nhom7.Services.Interfaces;
+using NMCNPM_Nhom7.Models;
 
 public class ProductController : Controller
 {
@@ -17,11 +18,24 @@ public class ProductController : Controller
     }
 
     [HttpGet("/products")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var products = _context.Products.ToList();
-        return View(products);
+        var productList = await _context.ProductDetails
+            .Include(d => d.Product)
+            .Select(d => new ProductDisplayModel
+            {
+                ProductID = d.IProductID,
+                ProductName = d.Product!.SProductName,
+                SellPrice = d.FSellPrice,
+                Quantity = d.IQuantity
+            })
+            .ToListAsync();
+
+
+
+        return View(productList);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Create()

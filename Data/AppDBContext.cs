@@ -14,7 +14,7 @@ namespace NMCNPM_Nhom7.Data
         public DbSet<SupplierModel> Suppliers { get; set; }
         public DbSet<UnitModel> Units { get; set; }
         public DbSet<ProductModel> Products { get; set; }
-        public DbSet<ProductDetailModel> ProductDetails { get; set; }  // ✅ Bổ sung mới
+        public DbSet<ProductDetailModel> ProductDetails { get; set; } 
         public DbSet<DiscountedProductModel> DiscountedProducts { get; set; }
         public DbSet<InvoiceModel> Invoices { get; set; }
         public DbSet<InvoiceDetailModel> InvoiceDetails { get; set; }
