@@ -76,13 +76,21 @@
 			<div id="alertMessage" class="alert d-none" role="alert"></div>
             <div class="mb-3">
                 <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
-                <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại" id="phoneNumber"/>
+                <input type="text" name="PhoneNumber" id="phoneNumber"
+					class="form-control"
+					placeholder="Nhập số điện thoại"
+					value="@(Context.Session.GetString("Phone") ?? "")" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Password" class="form-label">Mật khẩu</label>
-                <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" type="password" id="password"/>
+                <input asp-for="Password"
+					class="form-control"
+					placeholder="Nhập mật khẩu"
+					type="password"
+					id="password"
+					value="@(Context.Session.GetString("Password") ?? "")" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 

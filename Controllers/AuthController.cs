@@ -37,6 +37,8 @@ public class AuthController : Controller
             if (user == null)
                 return StatusCode(500, new { message = "Lỗi khi tạo người dùng." });
 
+            HttpContext.Session.SetString("Phone", model.PhoneNumber);
+            HttpContext.Session.SetString("Password", model.Password); 
             return Ok(new
             {
                 status = 200,
@@ -67,8 +69,9 @@ public class AuthController : Controller
                 message = "Số điện thoại hoặc mật khẩu không chính xác"
             });
 
-        HttpContext.Session.SetString("UserName", user.SFullName); // Lưu chuỗi
-        HttpContext.Session.SetInt32("UserID", user.IEmployeeID);      // Lưu số nguyên
+        HttpContext.Session.Clear();
+        HttpContext.Session.SetString("UserName", user.SFullName); 
+        HttpContext.Session.SetInt32("UserID", user.IEmployeeID);      
 
         return Ok(new
         {

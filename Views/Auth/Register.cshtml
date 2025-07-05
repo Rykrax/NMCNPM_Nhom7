@@ -52,8 +52,8 @@
                 gender: $("[name='Gender']").val() === "true",
 				password: $("#password").val()
 			};
-            @* console.log(dto); *@
-
+            console.log(dto);
+            
 			const res = await fetch("/register", {
 				method: "POST",
 				headers: {
@@ -66,9 +66,11 @@
 
 			if (res.ok) {
 				console.log(data);
-                showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng nhập thành công!");
                 resetField();
-				clearAlert();
+                showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng ký thành công!");
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
 			} else {
                 showAlert("#alertMessage", "d-none alert-success", "alert-danger", data.message);
 				clearAlert();
