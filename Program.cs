@@ -19,7 +19,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);  // Thời gian không hoạt động tối đa
+    options.Cookie.HttpOnly = true;                  // Ngăn JavaScript truy cập cookie
+    options.Cookie.IsEssential = true;               // Bắt buộc với GDPR
+});
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

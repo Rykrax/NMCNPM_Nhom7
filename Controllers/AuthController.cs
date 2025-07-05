@@ -67,6 +67,8 @@ public class AuthController : Controller
                 message = "Số điện thoại hoặc mật khẩu không chính xác"
             });
 
+        HttpContext.Session.SetString("UserName", user.SFullName); // Lưu chuỗi
+        HttpContext.Session.SetInt32("UserID", user.IEmployeeID);      // Lưu số nguyên
 
         return Ok(new
         {
