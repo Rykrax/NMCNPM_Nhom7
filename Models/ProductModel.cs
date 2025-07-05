@@ -16,24 +16,8 @@ public class ProductModel
     [Column("iCategoryID")]
     public int? ICategoryID { get; set; }
 
-    [Column("fPrice", TypeName = "decimal(18,2)")]
-    public decimal? FPrice { get; set; }
-
-    [Column("iQuantity")]
-    public int IQuantity { get; set; } = 0;
-
-    [Column("iUnitID")]
-    public int? IUnitID { get; set; }
-
-    [Column("iSupplierID")]
-    public int? ISupplierID { get; set; }
-
     [ForeignKey("ICategoryID")]
     public virtual ProductCategoryModel? Category { get; set; }
 
-    [ForeignKey("IUnitID")]
-    public virtual UnitModel? Unit { get; set; }
-
-    [ForeignKey("ISupplierID")]
-    public virtual SupplierModel? Supplier { get; set; }
+    public virtual ICollection<ProductDetailModel>? ProductDetails { get; set; }
 }

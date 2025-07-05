@@ -16,7 +16,7 @@ public class ProductController : Controller
         _productService = productService;
     }
 
-    [HttpGet("products")]
+    [HttpGet("/products")]
     public IActionResult Index()
     {
         var products = _context.Products.ToList();
@@ -30,8 +30,6 @@ public class ProductController : Controller
         {
             SProductName = string.Empty,
             ICategoryID = 0,
-            FPrice = 0,
-            IQuantity = 0,
             IUnitID = 0,
             ISupplierID = 0,
             Categories = await _context.ProductCategories
@@ -53,6 +51,11 @@ public class ProductController : Controller
                     Text = s.SCompanyName
                 }).ToListAsync()
         };
+
+        viewModel.Categories.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn loại sản phẩm --" });
+        viewModel.Units.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn đơn vị tính --" });
+        viewModel.Suppliers.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn nhà cung cấp --" });
+
         return View(viewModel);
     }
 
@@ -61,21 +64,56 @@ public class ProductController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View(model);
+            return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
         }
 
-        var product = new ProductModel
+        var product = await _context.Products
+            .Include(p => p.ProductDetails)
+            .FirstOrDefaultAsync(p =>
+                p.SProductName == model.SProductName &&
+                p.ICategoryID == model.ICategoryID
+            );
+
+        if (product != null)
         {
-            SProductName = model.SProductName,
-            ICategoryID = model.ICategoryID,
-            FPrice = model.FPrice,
+            var existingDetail = product.ProductDetails.FirstOrDefault(d =>
+                d.IUnitID == model.IUnitID &&
+                d.ISupplierID == model.ISupplierID
+            );
+
+            if (existingDetail != null)
+            {
+                existingDetail.IQuantity += model.IQuantity;
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Sản phẩm đã tồn tại, số lượng đã được cập nhật." });
+            }
+        }
+        else
+        {
+            product = new ProductModel
+            {
+                SProductName = model.SProductName,
+                ICategoryID = model.ICategoryID
+            };
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+        }
+
+        var productDetail = new ProductDetailModel
+        {
+            IProductID = product.IProductID,
+            FImportPrice = model.FImportPrice,
+            FSellPrice = model.FImportPrice, 
             IQuantity = model.IQuantity,
             IUnitID = model.IUnitID,
             ISupplierID = model.ISupplierID
         };
 
-        await _productService.CreateProductAsync(product);
+        _context.ProductDetails.Add(productDetail);
+        await _context.SaveChangesAsync();
 
-        return Json(new { success = true });
+        return Json(new { success = true, message = "Sản phẩm đã được thêm thành công!" });
     }
 }

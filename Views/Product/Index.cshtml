@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <p>
@@ -24,8 +25,8 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.IProductID">@item.SProductName</a>
                 </td>
-                <td>@item.FPrice ₫</td>
-                <td>@item.IQuantity</td>
+                @* <td>@item.FPrice ₫</td>
+                <td>@item.IQuantity</td> *@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.IProductID" class="btn btn-sm btn-warning">Sửa</a>
                     <a asp-action="Delete" asp-route-id="@item.IProductID" class="btn btn-sm btn-danger">Xóa</a>
