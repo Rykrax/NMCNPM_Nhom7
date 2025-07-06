@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NMCNPM_Nhom7.Services.Interfaces;
 using NMCNPM_Nhom7.Models;
 
-public class ProductController : Controller
+public class ProductController : BaseController
 {
     private readonly AppDbContext _context;
     private readonly IProductService _productService;
