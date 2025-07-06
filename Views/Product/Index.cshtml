@@ -1,7 +1,8 @@
-@model IEnumerable<ProductModel>
+@model IEnumerable<NMCNPM_Nhom7.Models.ProductDisplayModel>
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <p>
@@ -22,13 +23,17 @@
         {
             <tr>
                 <td>
+<<<<<<< HEAD
                     <a asp-action="#" asp-route-id="@item.IProductID">@item.SProductName</a>
+=======
+                    <a asp-action="Details" asp-route-id="@item.ProductID">@item.ProductName</a>
+>>>>>>> 06eb351932ffea3eefcd8d6486d5899ae7deaaa2
                 </td>
-                <td>@item.FPrice ₫</td>
-                <td>@item.IQuantity</td>
+                <td>@item.SellPrice vnđ</td>
+                <td>@item.Quantity</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IProductID" class="btn btn-sm btn-warning">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.IProductID" class="btn btn-sm btn-danger">Xóa</a>
+                    <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-danger">Xóa</a>
                 </td>
             </tr>
         }
