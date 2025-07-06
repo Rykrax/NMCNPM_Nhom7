@@ -1,28 +1,34 @@
-@model NMCNPM_Nhom7.DTOs.CreateProductDTO
+@model NMCNPM_Nhom7.DTOs.EditProductDTO
 
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
 }
 
-@* @section Scripts {
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function () {
             $("form").on("submit", function (e) {
                 e.preventDefault(); // Prevent default form submission
 
+                const form = $(this);
+                if (!form.valid()) {
+                    return;
+                }
+
                 var dto = {
+                    IProductDetailID: $("#IProductDetailID").val(),
                     SProductName: $("#SProductName").val(),
                     ICategoryID: $("#ICategoryID").val(),
-                    FPrice: parseFloat($("#FPrice").val()),
+                    FImportPrice: parseFloat($("#FImportPrice").val()),
                     IQuantity: parseInt($("#IQuantity").val()),
                     IUnitID: $("#IUnitID").val(),
                     ISupplierID: $("#ISupplierID").val()
                 };
 
-                console.log(dto); // For debugging
+                console.log(dto);
 
-                fetch("/Product/Create", {
+                fetch("/Product/Edit", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -32,8 +38,8 @@
                     .then(response => response.json())
                     .then(result => {
                         if (result.success) {
-                            alert("Sản phẩm đã được thêm thành công!");
-                            //window.location.href = "/products";  Redirect to product list
+                            alert("Sản phẩm đã được cập nhật thành công!");
+                            window.location.href = "/products";  //Redirect to product list
                         } else {
                             alert("Có lỗi xảy ra: " + result.message);
                         }
@@ -43,9 +49,10 @@
         });
     </script>
 
-} *@
+}
 
 <form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="IProductDetailID" />
     <div class="form-group">
         <label asp-for="SProductName">Tên sản phẩm</label>
         <input asp-for="SProductName" class="form-control" />
@@ -59,9 +66,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="FPrice">Giá sản phẩm</label>
-        <input asp-for="FPrice" class="form-control" />
-        <span asp-validation-for="FPrice" class="text-danger"></span>
+        <label asp-for="FImportPrice">Giá nhập</label>
+        <input asp-for="FImportPrice" class="form-control" />
+        <span asp-validation-for="FImportPrice" class="text-danger"></span>
     </div>
 
     <div class="form-group">

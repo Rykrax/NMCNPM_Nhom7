@@ -7,12 +7,9 @@ namespace NMCNPM_Nhom7.Repositories.Interfaces
         Task<List<ProductModel>> GetAllAsync();
         Task<ProductModel?> GetByIdAsync(int id);
         Task<ProductModel?> GetByNameAsync(string name);
+        Task<ProductDetailModel?> GetProductDetailByIdAsync(int id);
         Task<ProductModel> CreateAsync(ProductModel product);
-        Task<bool> UpdateAsync(int id, ProductModel product);
-        Task<bool> DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
-        Task<List<ProductCategoryModel>> GetCategoriesAsync();
-        Task<List<UnitModel>> GetUnitsAsync();
-        Task<List<SupplierModel>> GetSuppliersAsync();
+        Task<bool> SaveChangesAsync();
     }
 }

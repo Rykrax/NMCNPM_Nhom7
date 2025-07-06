@@ -23,15 +23,37 @@
         {
             <tr>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.ProductID">@item.ProductName</a>
+                    <a asp-action="Details" asp-route-id="@item.ProductDetailID">@item.ProductName</a>
                 </td>
                 <td>@item.SellPrice vnđ</td>
                 <td>@item.Quantity</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-warning">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-danger">Xóa</a>
+                    <a asp-action="Edit" asp-route-id="@item.ProductDetailID" class="btn btn-sm btn-warning">Sửa</a>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete(@item.ProductDetailID)">Xóa</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            if (confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
+                fetch(`/Product/Delete/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message || "Xóa không thành công.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        }
+    </script>
+}

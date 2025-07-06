@@ -29,6 +29,11 @@ namespace NMCNPM_Nhom7.Repositories
             return await _context.Products.FirstOrDefaultAsync(p => p.SProductName == name);
         }
 
+        public async Task<ProductDetailModel?> GetProductDetailByIdAsync(int id)
+        {
+            return await _context.ProductDetails.FirstOrDefaultAsync(pd => pd.IProductID == id);
+        }
+
         public async Task<ProductModel> CreateAsync(ProductModel product)
         {
             _context.Products.Add(product);
@@ -36,39 +41,14 @@ namespace NMCNPM_Nhom7.Repositories
             return product;
         }
 
-        public async Task<bool> UpdateAsync(int id, ProductModel product)
-        {
-            if (id != product.IProductID) return false;
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return false;
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Products.AnyAsync(p => p.IProductID == id);
         }
 
-        public async Task<List<ProductCategoryModel>> GetCategoriesAsync()
+        public async Task<bool> SaveChangesAsync()
         {
-            return await _context.ProductCategories.ToListAsync();
-        }
-        public async Task<List<UnitModel>> GetUnitsAsync()
-        {
-            return await _context.Units.ToListAsync();
-        }
-        public async Task<List<SupplierModel>> GetSuppliersAsync()
-        {
-            return await _context.Suppliers.ToListAsync();
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

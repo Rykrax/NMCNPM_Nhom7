@@ -51,10 +51,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Login}/{id?}")
     .WithStaticAssets();
 
-app.MapGet("/", context =>
-{
-    context.Response.Redirect("/login");
-    return Task.CompletedTask;
-});
+// app.MapGet("/", context =>
+// {
+//     context.Response.Redirect("/login");
+//     return Task.CompletedTask;
+// });
 
 app.Run();

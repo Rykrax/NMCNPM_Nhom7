@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NMCNPM_Nhom7.Services.Interfaces;
 using NMCNPM_Nhom7.Models;
 
-public class ProductController : BaseController
+public class ProductController : Controller
 {
     private readonly AppDbContext _context;
     private readonly IProductService _productService;
@@ -25,6 +25,7 @@ public class ProductController : BaseController
             .Select(d => new ProductDisplayModel
             {
                 ProductID = d.IProductID,
+                ProductDetailID = d.IProductDetailID,
                 ProductName = d.Product!.SProductName,
                 SellPrice = d.FSellPrice,
                 Quantity = d.IQuantity
@@ -119,7 +120,7 @@ public class ProductController : BaseController
         {
             IProductID = product.IProductID,
             FImportPrice = model.FImportPrice,
-            FSellPrice = model.FImportPrice, 
+            FSellPrice = model.FImportPrice,
             IQuantity = model.IQuantity,
             IUnitID = model.IUnitID,
             ISupplierID = model.ISupplierID
@@ -134,20 +135,26 @@ public class ProductController : BaseController
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var product = await _productService.GetProductByIdAsync(id);
+        var productDetail = await _productService.GetProductDetailsAsync(id);
+        if (productDetail == null)
+        {
+            return NotFound();
+        }
+        var product = await _productService.GetProductByIdAsync(productDetail.IProductID);
         if (product == null)
         {
             return NotFound();
         }
 
-        var viewModel = new CreateProductDTO
+        var viewModel = new EditProductDTO
         {
+            IProductDetailID = productDetail.IProductDetailID,
             SProductName = product.SProductName ?? string.Empty,
             ICategoryID = product.ICategoryID ?? 0,
-            FPrice = product.FPrice ?? 0,
-            IQuantity = product.IQuantity,
-            IUnitID = product.IUnitID ?? 0,
-            ISupplierID = product.ISupplierID ?? 0,
+            IUnitID = productDetail.IUnitID,
+            ISupplierID = productDetail.ISupplierID,
+            FImportPrice = productDetail.FImportPrice ?? 0,
+            IQuantity = productDetail.IQuantity,
             Categories = await _context.ProductCategories
                 .Select(c => new SelectListItem
                 {
@@ -167,6 +174,39 @@ public class ProductController : BaseController
                     Text = s.SCompanyName
                 }).ToListAsync()
         };
+        viewModel.Categories.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn loại sản phẩm --" });
+        viewModel.Units.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn đơn vị tính --" });
+        viewModel.Suppliers.Insert(0, new SelectListItem { Value = "", Text = "-- Chọn nhà cung cấp --" });
+
         return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit([FromBody] EditProductDTO model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+        }
+
+        var result = await _productService.UpdateProductAsync(model.IProductDetailID, model);
+        if (!result)
+        {
+            return Json(new { success = false, message = "Cập nhật sản phẩm không thành công." });
+        }
+
+        return Json(new { success = true, message = "Sản phẩm đã được cập nhật thành công!" });
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _productService.DeleteProductAsync(id);
+        if (!result)
+        {
+            return Json(new { success = false, message = "Xóa sản phẩm không thành công." });
+        }
+
+        return Json(new { success = true, message = "Sản phẩm đã được xóa thành công!" });
     }
 }

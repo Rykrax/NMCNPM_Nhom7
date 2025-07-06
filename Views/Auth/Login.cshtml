@@ -1,6 +1,6 @@
 @model LoginDTO
 @{
-    ViewData["Title"] = "Đăng nhập";
+	ViewData["Title"] = "Đăng nhập";
 	Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -10,15 +10,15 @@
 		let clearAlert = (time) => {
 			setTimeout(function () {
 				$("#alertMessage").addClass("d-none").removeClass("alert-success alert-danger");
-				$("#alertText").text(""); 
+				$("#alertText").text("");
 			}, time);
 		};
 
 		let showAlert = (selector, removeClass, addClass, text) => {
 			$(selector)
-					.removeClass(removeClass)
-					.addClass(addClass)
-					.text(text);
+				.removeClass(removeClass)
+				.addClass(addClass)
+				.text(text);
 		};
 
 		document.querySelector("form").addEventListener("submit", async function (e) {
@@ -48,7 +48,7 @@
 				console.log(data);
 				showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng nhập thành công!");
 				setTimeout(() => {
-					window.location.href = "/home";
+					window.location.href = "/";
 				}, 2500);
 			} else {
 				showAlert("#alertMessage", "d-none alert-success", "alert-danger", data.message);
@@ -60,54 +60,47 @@
 }
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="bg-white p-4 rounded shadow-sm" style="width: 100%; max-width: 400px;">
-        <h2 class="text-center mb-4">Đăng nhập</h2>
+	<div class="bg-white p-4 rounded shadow-sm" style="width: 100%; max-width: 400px;">
+		<h2 class="text-center mb-4">Đăng nhập</h2>
 
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>@TempData["ErrorMessage"]</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
+		@if (TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>@TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
 
-        <form asp-action="Login" method="post">
-            @* <div asp-validation-summary="ModelOnly" class="alert alert-danger">Lỗi gì đó</div> *@
+		<form asp-action="Login" method="post">
+			@* <div asp-validation-summary="ModelOnly" class="alert alert-danger">Lỗi gì đó</div> *@
 			<div id="alertMessage" class="alert d-none" role="alert"></div>
-            <div class="mb-3">
-                <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
-                <input type="text" name="PhoneNumber" id="phoneNumber"
-					class="form-control"
-					placeholder="Nhập số điện thoại"
-					value="@(Context.Session.GetString("Phone") ?? "")" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
+			<div class="mb-3">
+				<label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+				<input type="text" name="PhoneNumber" id="phoneNumber" class="form-control"
+					placeholder="Nhập số điện thoại" value="@(Context.Session.GetString("Phone") ?? "")" />
+				<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+			</div>
 
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label">Mật khẩu</label>
-                <input asp-for="Password"
-					class="form-control"
-					placeholder="Nhập mật khẩu"
-					type="password"
-					id="password"
+			<div class="mb-3">
+				<label asp-for="Password" class="form-label">Mật khẩu</label>
+				<input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" type="password" id="password"
 					value="@(Context.Session.GetString("Password") ?? "")" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
 
-            <div class="mb-3 text-end">
-                <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
-            </div>
+			<div class="mb-3 text-end">
+				<a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+			</div>
 
-            <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+			<button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
 
-            <p class="text-center mt-3 mb-1">
-                Chưa có tài khoản?
-                <a asp-controller="Auth" asp-action="Register" class="text-decoration-none">Đăng ký</a>
-            </p>
-            @* <div class="text-center">
+			<p class="text-center mt-3 mb-1">
+				Chưa có tài khoản?
+				<a asp-controller="Auth" asp-action="Register" class="text-decoration-none">Đăng ký</a>
+			</p>
+			@* <div class="text-center">
                 <a asp-controller="Aut" asp-action="Index" class="text-decoration-none">Quay lại</a>
             </div> *@
-        </form>
-    </div>
+		</form>
+	</div>
 </div>
-
