@@ -78,4 +78,43 @@ public class ProductController : Controller
 
         return Json(new { success = true });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var product = await _productService.GetProductByIdAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new CreateProductDTO
+        {
+            SProductName = product.SProductName ?? string.Empty,
+            ICategoryID = product.ICategoryID ?? 0,
+            FPrice = product.FPrice ?? 0,
+            IQuantity = product.IQuantity,
+            IUnitID = product.IUnitID ?? 0,
+            ISupplierID = product.ISupplierID ?? 0,
+            Categories = await _context.ProductCategories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.ICategoryID.ToString(),
+                    Text = c.SCategoryName
+                }).ToListAsync(),
+            Units = await _context.Units
+                .Select(u => new SelectListItem
+                {
+                    Value = u.IUnitID.ToString(),
+                    Text = u.SUnitName
+                }).ToListAsync(),
+            Suppliers = await _context.Suppliers
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ISupplierID.ToString(),
+                    Text = s.SCompanyName
+                }).ToListAsync()
+        };
+        return View(viewModel);
+    }
 }

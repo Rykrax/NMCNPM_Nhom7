@@ -1,6 +1,5 @@
 @{
     ViewData["Title"] = "Bán Hàng";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
@@ -20,15 +19,15 @@
                     @{
                         var products = new[]
                         {
-                            new { Name = "Coca Cola", Price = "12.000đ", Stock = "50" },
-                            new { Name = "Pepsi", Price = "12.000đ", Stock = "45" },
-                            new { Name = "Bánh mì", Price = "15.000đ", Stock = "30" },
-                            new { Name = "Mì tôm Hảo Hảo", Price = "8.000đ", Stock = "60" },
-                            new { Name = "Sữa tươi Vinamilk", Price = "10.000đ", Stock = "40" },
-                            new { Name = "Kẹo mút Chupa Chups", Price = "5.000đ", Stock = "100" },
-                            new { Name = "Bút bi Thiên Long", Price = "7.000đ", Stock = "80" },
-                            new { Name = "Nước suối Aquafina", Price = "6.000đ", Stock = "70" }
-                        };
+                    new { Name = "Coca Cola", Price = "12.000đ", Stock = "50" },
+                    new { Name = "Pepsi", Price = "12.000đ", Stock = "45" },
+                    new { Name = "Bánh mì", Price = "15.000đ", Stock = "30" },
+                    new { Name = "Mì tôm Hảo Hảo", Price = "8.000đ", Stock = "60" },
+                    new { Name = "Sữa tươi Vinamilk", Price = "10.000đ", Stock = "40" },
+                    new { Name = "Kẹo mút Chupa Chups", Price = "5.000đ", Stock = "100" },
+                    new { Name = "Bút bi Thiên Long", Price = "7.000đ", Stock = "80" },
+                    new { Name = "Nước suối Aquafina", Price = "6.000đ", Stock = "70" }
+                    };
 
                         foreach (var item in products)
                         {
