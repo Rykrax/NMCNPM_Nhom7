@@ -209,4 +209,30 @@ public class ProductController : Controller
 
         return Json(new { success = true, message = "Sản phẩm đã được xóa thành công!" });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDetailJson(int id)
+    {
+        var detail = await _productService.GetProductDetailsAsync(id);
+        if (detail == null)
+            return NotFound();
+
+        var product = await _productService.GetProductByIdAsync(detail.IProductID);
+        if (product == null)
+            return NotFound();
+
+        var category = await _context.ProductCategories.FindAsync(product.ICategoryID);
+        var unit = await _context.Units.FindAsync(detail.IUnitID);
+        var supplier = await _context.Suppliers.FindAsync(detail.ISupplierID);
+
+        return Json(new
+        {
+            productName = product.SProductName,
+            sellPrice = detail.FSellPrice,
+            quantity = detail.IQuantity,
+            categoryName = category?.SCategoryName,
+            unitName = unit?.SUnitName,
+            supplierName = supplier?.SCompanyName
+        });
+    }
 }
