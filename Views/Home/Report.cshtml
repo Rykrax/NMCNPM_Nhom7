@@ -45,7 +45,11 @@
             let fromDate = "", toDate = "";
 
             if (mode === "today") {
-                const today = new Date().toISOString().split("T")[0];
+                const todayDate = new Date();
+                const today = todayDate.getFullYear() + "-" +
+                            String(todayDate.getMonth() + 1).padStart(2, '0') + "-" +
+                            String(todayDate.getDate()).padStart(2, '0');
+
                 fromDate = formatLocalDate(today, false);
                 toDate = formatLocalDate(today, true);
             } else if (mode === "range") {
@@ -66,6 +70,7 @@
                 toDate = formatLocalDate(toRaw, true);
             }
 
+            console.log(fromDate, toDate);
             let url = `@Url.Content("~/api/report")`;
             const params = new URLSearchParams();
             if (fromDate) params.append("fromDate", fromDate);
@@ -136,7 +141,7 @@
                 r.addEventListener("change", toggleDateInputs)
             );
             toggleDateInputs();
-            fetchReport();
+            @* fetchReport(); *@
         });
     </script>
 }
