@@ -1,0 +1,211 @@
+@{
+    ViewData["Title"] = "Báo Cáo Thống Kê";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance;
+
+        function toggleDateInputs() {
+            const mode = document.querySelector('input[name="reportMode"]:checked').value;
+            document.getElementById("dateRangeSection").style.display = (mode === "range") ? "flex" : "none";
+        }
+
+        function formatLocalDate(dateStr, isEndOfDay = false) {
+            if (!dateStr) return "";
+            const date = new Date(dateStr);
+            if (isEndOfDay) date.setHours(23, 59, 59, 999);
+            else date.setHours(0, 0, 0, 0);
+
+            // Định dạng yyyy-MM-dd HH:mm:ss (local, không UTC)
+            const yyyy = date.getFullYear();
+            const MM = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const HH = String(date.getHours()).padStart(2, '0');
+            const mm = String(date.getMinutes()).padStart(2, '0');
+            const ss = String(date.getSeconds()).padStart(2, '0');
+            return `${yyyy}-${MM}-${dd}T${HH}:${mm}:${ss}`;
+        }
+
+        async function fetchReport() {
+            const mode = document.querySelector('input[name="reportMode"]:checked').value;
+
+            let fromDate = "", toDate = "";
+
+            if (mode === "today") {
+                const today = new Date().toISOString().split("T")[0];
+                fromDate = formatLocalDate(today, false);
+                toDate = formatLocalDate(today, true);
+            } else if (mode === "range") {
+                const fromRaw = document.getElementById("fromDate").value;
+                const toRaw = document.getElementById("toDate").value;
+
+                if (!fromRaw || !toRaw) {
+                    alert("Vui lòng chọn đầy đủ ngày.");
+                    return;
+                }
+
+                if (new Date(fromRaw) > new Date(toRaw)) {
+                    alert("Ngày bắt đầu không được lớn hơn ngày kết thúc.");
+                    return;
+                }
+
+                fromDate = formatLocalDate(fromRaw, false);
+                toDate = formatLocalDate(toRaw, true);
+            }
+
+            let url = `@Url.Content("~/api/report")`;
+            const params = new URLSearchParams();
+            if (fromDate) params.append("fromDate", fromDate);
+            if (toDate) params.append("toDate", toDate);
+            if (params.toString()) url += "?" + params.toString();
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("Không thể tải dữ liệu báo cáo.");
+                const data = await res.json();
+                renderReport(data);
+            } catch (err) {
+                alert("Lỗi khi tải báo cáo.");
+                console.error(err);
+            }
+        }
+
+        function renderReport(data) {
+            document.getElementById("totalRevenue").innerText = (data.totalRevenue || 0).toLocaleString() + " ₫";
+            document.getElementById("totalInvoices").innerText = data.totalInvoices || 0;
+
+            const topHtml = (data.topProducts || []).map(p => `
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>${p.productName}</span><span>${p.quantitySold} sản phẩm</span>
+                </li>
+            `).join("") || "<li class='list-group-item'>Không có dữ liệu</li>";
+            document.getElementById("topProducts").innerHTML = topHtml;
+
+            const labels = (data.revenueByDate || []).map(d => new Date(d.date).toLocaleDateString());
+            const values = (data.revenueByDate || []).map(d => d.revenue);
+            renderChart(labels, values);
+        }
+
+        function renderChart(labels, data) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: data,
+                        borderColor: '#28a745',
+                        backgroundColor: '#28a74522',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => value.toLocaleString() + " ₫"
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("btnFilter").addEventListener("click", fetchReport);
+            document.querySelectorAll('input[name="reportMode"]').forEach(r =>
+                r.addEventListener("change", toggleDateInputs)
+            );
+            toggleDateInputs();
+            fetchReport();
+        });
+    </script>
+}
+
+<main class="container py-4">
+    <h2 class="mb-4">Báo Cáo Thống Kê</h2>
+
+    <div class="mb-3">
+        <label class="form-label">Chọn chế độ thống kê:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="reportMode" id="reportToday" value="today" checked />
+            <label class="form-check-label" for="reportToday">Hôm nay</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="reportMode" id="reportAll" value="" />
+            <label class="form-check-label" for="reportAll">Toàn bộ</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="reportMode" id="reportRange" value="range" />
+            <label class="form-check-label" for="reportRange">Khoảng thời gian</label>
+        </div>
+    </div>
+
+    <div id="dateRangeSection" class="row mb-4" style="display: none;">
+        <div class="col-md-3">
+            <label for="fromDate" class="form-label">Từ ngày</label>
+            <input type="date" id="fromDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="toDate" class="form-label">Đến ngày</label>
+            <input type="date" id="toDate" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button id="btnFilter" class="btn btn-primary">Lọc</button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng doanh thu</h5>
+                    <p class="card-text fs-4" id="totalRevenue">0 ₫</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Số lượng hóa đơn</h5>
+                    <p class="card-text fs-4" id="totalInvoices">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h5>Sản phẩm bán chạy</h5>
+            <ul class="list-group" id="topProducts">
+                <li class="list-group-item">Đang tải dữ liệu...</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h5>Biểu đồ doanh thu</h5>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</main>

@@ -19,7 +19,8 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Index()
+    [HttpGet("/report")]
+    public IActionResult Report()
     {
         return View();
     }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NMCNPM_Nhom7.Data;
 using NMCNPM_Nhom7.DTOs;
-using NMCNPM_Nhom7.Repositories.Interfaces;
 using NMCNPM_Nhom7.Services;
 using NMCNPM_Nhom7.Services.Interfaces;
 
