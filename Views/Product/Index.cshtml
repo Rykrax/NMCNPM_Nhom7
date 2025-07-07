@@ -23,7 +23,9 @@
         {
             <tr>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.ProductDetailID">@item.ProductName</a>
+                    <button class="btn btn-link p-0" onclick="showDetails(@item.ProductDetailID)">
+                        @item.ProductName
+                    </button>
                 </td>
                 <td>@item.SellPrice vnđ</td>
                 <td>@item.Quantity</td>
@@ -36,6 +38,28 @@
     </tbody>
 </table>
 
+<!-- Modal -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Tên sản phẩm:</strong> <span id="detailName"></span></p>
+                <p><strong>Giá bán:</strong> <span id="detailPrice"></span></p>
+                <p><strong>Số lượng:</strong> <span id="detailQuantity"></span></p>
+                <p><strong>Nhà cung cấp:</strong> <span id="detailSupplier"></span></p>
+                <p><strong>Loại:</strong> <span id="detailCategory"></span></p>
+                <p><strong>Đơn vị:</strong> <span id="detailUnit"></span></p>
+                <!-- Thêm gì tùy bạn -->
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         function confirmDelete(id) {
@@ -45,15 +69,31 @@
                 })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            location.reload();
-                        } else {
-                            alert(data.message || "Xóa không thành công.");
-                        }
+                        alert(data.message || "Xóa không thành công.");
+                        if (data.success) location.reload();
                     })
-                    .catch(error => console.error("Error:", error));
+                    .catch(err => console.error("Error:", err));
             }
+        }
+
+        function showDetails(id) {
+            fetch(`/Product/GetDetailJson/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById("detailName").innerText = data.productName;
+                        document.getElementById("detailPrice").innerText = data.sellPrice + " vnđ";
+                        document.getElementById("detailQuantity").innerText = data.quantity;
+                        document.getElementById("detailSupplier").innerText = data.supplierName || "Không rõ";
+                        document.getElementById("detailCategory").innerText = data.categoryName || "Không rõ";
+                        document.getElementById("detailUnit").innerText = data.unitName || "Không rõ";
+                        var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+                        modal.show();
+                    } else {
+                        alert("Không lấy được dữ liệu chi tiết.");
+                    }
+                })
+                .catch(err => console.error("Error loading product detail:", err));
         }
     </script>
 }
