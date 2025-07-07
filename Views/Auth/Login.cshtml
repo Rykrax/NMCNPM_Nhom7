@@ -48,7 +48,7 @@
 				console.log(data);
 				showAlert("#alertMessage", "d-none alert-danger", "alert-success", "Đăng nhập thành công!");
 				setTimeout(() => {
-					window.location.href = "/";
+					window.location.href = "/home";
 				}, 2500);
 			} else {
 				showAlert("#alertMessage", "d-none alert-success", "alert-danger", data.message);

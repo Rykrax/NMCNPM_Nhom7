@@ -13,7 +13,7 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [HttpGet("/")]
+    [HttpGet("/home")]
     public IActionResult HomePage()
     {
         return View();

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NMCNPM_Nhom7.Data;
-using NMCNPM_Nhom7.Models;
 using NMCNPM_Nhom7.Repositories.Interfaces;
 
 namespace NMCNPM_Nhom7.Repositories

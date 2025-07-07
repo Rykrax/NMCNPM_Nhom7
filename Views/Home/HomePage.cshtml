@@ -1,79 +1,215 @@
 @{
     ViewData["Title"] = "Bán Hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-    <!-- Nếu bạn muốn thêm CSS tùy chỉnh riêng cho trang này -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 }
-
-<div class="row">
-    <!-- Danh sách sản phẩm -->
-    <div class="col-md-8">
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Danh Sách Sản Phẩm</span>
-                <input type="text" class="form-control form-control-sm w-50" placeholder="Tìm kiếm sản phẩm..." />
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    @{
-                        var products = new[]
-                        {
-                    new { Name = "Coca Cola", Price = "12.000đ", Stock = "50" },
-                    new { Name = "Pepsi", Price = "12.000đ", Stock = "45" },
-                    new { Name = "Bánh mì", Price = "15.000đ", Stock = "30" },
-                    new { Name = "Mì tôm Hảo Hảo", Price = "8.000đ", Stock = "60" },
-                    new { Name = "Sữa tươi Vinamilk", Price = "10.000đ", Stock = "40" },
-                    new { Name = "Kẹo mút Chupa Chups", Price = "5.000đ", Stock = "100" },
-                    new { Name = "Bút bi Thiên Long", Price = "7.000đ", Stock = "80" },
-                    new { Name = "Nước suối Aquafina", Price = "6.000đ", Stock = "70" }
-                    };
-
-                        foreach (var item in products)
-                        {
-                            <div class="col-md-3">
-                                <div class="card h-100 text-center">
-                                    <div class="card-body">
-                                        <p class="fw-bold">@item.Name</p>
-                                        <p>@item.Price</p>
-                                        <p class="text-muted">Còn @item.Stock cái</p>
-                                        <button class="btn btn-primary btn-sm">Thêm vào giỏ</button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Hóa đơn bán hàng -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                Hóa Đơn Bán Hàng
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label>Khách Hàng</label>
-                    <input type="text" class="form-control" placeholder="Nhập tên hoặc số điện thoại" />
-                </div>
-                <hr />
-                <p>Tạm tính: <span class="float-end">0đ</span></p>
-                <p>Giảm giá: <span class="float-end">0đ</span></p>
-                <p>VAT (8%): <span class="float-end">0đ</span></p>
-                <hr />
-                <h5>Tổng cộng: <span class="float-end text-success">0đ</span></h5>
-                <div class="d-grid gap-2 mt-3">
-                    <button class="btn btn-success">Thanh Toán</button>
-                    <button class="btn btn-danger">Hủy Đơn</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
-    <!-- Thêm JS nếu cần -->
+    <script>
+        let selectedProducts = [];
+        let lastSearchData = [];
+
+        const showInvoiceSection = () => {
+            $("#invoiceSection").removeClass("d-none");
+        };
+
+        const resetField = () => {
+            $('#totalSum').text('0 ₫');
+            $('#discount').text('0 ₫');
+            $('#finalAmount').text('0 ₫');
+        };
+
+        const addProductToInvoice = () => {
+            $("#searchBox").on('input', async function () {
+                const keyword = $(this).val().trim();
+                if (keyword.length === 0) {
+                    $('#searchResults').addClass('d-none').html('');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`/search-products?keyword=${encodeURIComponent(keyword)}`);
+                    if (!res.ok) throw new Error('Lỗi mạng');
+                    const data = await res.json();
+                    lastSearchData = data;
+
+                    let html = '';
+                    if (data.length === 0) {
+                        html = '<div class="list-group-item">Không tìm thấy sản phẩm</div>';
+                    } else {
+                        data.forEach(item => {
+                            html += `
+                                <button type="button" class="list-group-item list-group-item-action"
+                                    onclick="selectProduct(${item.productDetailID})">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>${item.productName}</strong><br />
+                                            <small>Đơn vị: ${item.unitName}</small><br />
+                                            <small>Tồn: ${item.quantity}</small>
+                                        </div>
+                                        <div class="text-primary fw-bold">${(item.sellPrice || 0).toLocaleString()}₫</div>
+                                    </div>
+                                </button>
+                            `;
+                        });
+                    }
+
+                    html += `<button type="button" class="list-group-item text-center text-dark" onclick="addNewProduct()">+ Thêm mới hàng hóa</button>`;
+                    $('#searchResults').html(html).removeClass('d-none');
+                } catch (err) {
+                    $('#searchResults').html('<div class="list-group-item text-danger">Lỗi khi tìm</div>').removeClass('d-none');
+                }
+            });
+        };
+
+        const selectProduct = (id) => {
+            const item = lastSearchData.find(p => p.productDetailID === id);
+            if (!item) return;
+
+            const existing = selectedProducts.find(p => p.productDetailID === id);
+
+            if (existing) {
+                if (existing.quantity < existing.quantityAvailable) {
+                    existing.quantity++;
+                } else {
+                    alert(`Sản phẩm "${item.productName}" đã đạt số lượng tồn kho tối đa (${existing.quantityAvailable}).`);
+                }
+            } else {
+                selectedProducts.push({
+                    ...item,
+                    quantity: 1,
+                    quantityAvailable: item.quantity
+                });
+            }
+
+            renderProductList();
+            $('#searchResults').addClass('d-none');
+            $('#searchBox').val('');
+        };
+
+
+        const renderProductList = () => {
+            let html = '';
+            let total = 0;
+
+            selectedProducts.forEach((item, idx) => {
+                const lineTotal = (item.sellPrice || 0) * item.quantity;
+                total += lineTotal;
+
+                html += `
+                    <div class="d-flex align-items-center border rounded p-2 mb-2">
+                        <div class="me-2">${idx + 1}</div>
+                        <button class="btn btn-sm btn-danger me-2" onclick="removeProduct(${idx})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <div class="me-auto">${item.productName}</div>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm" onclick="decreaseQty(${idx})">−</button>
+                            <input type="text" readonly value="${item.quantity}" class="form-control form-control-sm mx-1" style="width: 40px;" />
+                            <button class="btn btn-sm" onclick="increaseQty(${idx})">+</button>
+                        </div>
+                        <div class="mx-3">${(item.sellPrice || 0).toLocaleString()}₫</div>
+                    </div>
+                `;
+            });
+
+            $('#productList').html(html);
+            $('#totalSum').text(`${total.toLocaleString()} ₫`);
+            $('#finalAmount').text(`${total.toLocaleString()} ₫`);
+        };
+
+        const removeProduct = (index) => {
+            const product = selectedProducts[index];
+            const confirmDelete = confirm(`Bạn có chắc muốn xóa sản phẩm "${product.productName}" khỏi hóa đơn?`);
+            if (confirmDelete) {
+                selectedProducts.splice(index, 1);
+                renderProductList();
+            }
+        };
+
+        const increaseQty = (index) => {
+            const product = selectedProducts[index];
+            if (product.quantity < product.quantityAvailable) {
+                product.quantity++;
+                renderProductList();
+            } else {
+                alert(`Không thể vượt quá số lượng tồn kho (${product.quantityAvailable}).`);
+            }
+        };
+
+        const decreaseQty = (index) => {
+            if (selectedProducts[index].quantity > 1) {
+                selectedProducts[index].quantity--;
+                renderProductList();
+            }
+        };
+
+        const addNewProduct = () => {
+            window.location.href = '/Product/Create';
+        };
+
+        const hideDropDown = () => {
+            $(document).on('click', e => {
+                if (!$(e.target).closest('#searchBox').length) {
+                    $('#searchResults').addClass('d-none');
+                }
+            });
+        };
+
+        $(document).ready(() => {
+            resetField();
+            addProductToInvoice();
+            hideDropDown();
+        });
+    </script>
 }
+
+<main class="p-4 flex-grow-1">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="justify-content-between align-items-center mb-2">
+                <button class="btn btn-sm btn-primary" onclick="showInvoiceSection()">+ Thêm hóa đơn</button>
+            </div>
+
+            <div id="invoiceSection" class="bg-white border rounded p-3 mb-3 d-none">
+                <h5>Hóa đơn thanh toán</h5>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Danh Sách Sản Phẩm</span>
+                    <div class="position-relative w-50">
+                        <input type="text" id="searchBox" class="form-control form-control-sm" placeholder="Tìm kiếm sản phẩm..." />
+                        <div id="searchResults" class="list-group position-absolute d-none" style="z-index: 1000; top: 100%; left: 0; right: 0;"></div>
+                    </div>
+                </div>
+
+                <div id="productList" class="mt-3"></div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">Thông Tin Thanh Toán</div>
+                <div class="card-body">
+                    <p><strong>Tổng tiền hàng:</strong> <span id="totalSum">0₫</span></p>
+                    <p><strong>Giảm giá:</strong> <span id="discount">0₫</span></p>
+                    <p><strong>Khách cần trả:</strong> <span id="finalAmount" class="text-success fw-bold">0₫</span></p>
+
+                    <div class="mb-3">
+                        <label>Phương thức thanh toán</label>
+                        <select class="form-select">
+                            <option>Tiền mặt</option>
+                            <option>Chuyển khoản</option>
+                            <option>Thẻ</option>
+                            <option>Ví điện tử</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-success w-100">THANH TOÁN</button>
+                    <button class="btn btn-danger mt-2 w-100">HỦY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -10,11 +10,13 @@ public class ProductController : Controller
 {
     private readonly AppDbContext _context;
     private readonly IProductService _productService;
+    private readonly IProductDetailService _productDetailService;
 
-    public ProductController(AppDbContext context, IProductService productService)
+    public ProductController(AppDbContext context, IProductService productService, IProductDetailService productDetailService)
     {
         _context = context;
         _productService = productService;
+        _productDetailService = productDetailService;
     }
 
     [HttpGet("/products")]
@@ -208,5 +210,12 @@ public class ProductController : Controller
         }
 
         return Json(new { success = true, message = "Sản phẩm đã được xóa thành công!" });
+    }
+
+    [HttpGet("/search-products")]
+    public async Task<JsonResult> Search(string keyword)
+    {
+        var result = await _productDetailService.SearchByProductNameAsync(keyword);
+        return Json(result); 
     }
 }
