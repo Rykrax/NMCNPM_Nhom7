@@ -31,7 +31,7 @@ public class InvoiceController : Controller
             var success = await _invoiceService.CreateInvoiceAsync(dto);
 
             if (success)
-                return Ok(new { message = "Tạo hóa đơn thành công." });
+                return Ok(new { message = "Thanh toán thành công." });
             else
                 return BadRequest("Không thể tạo hóa đơn.");
         }

@@ -47,8 +47,8 @@
             if (mode === "today") {
                 const todayDate = new Date();
                 const today = todayDate.getFullYear() + "-" +
-                            String(todayDate.getMonth() + 1).padStart(2, '0') + "-" +
-                            String(todayDate.getDate()).padStart(2, '0');
+                    String(todayDate.getMonth() + 1).padStart(2, '0') + "-" +
+                    String(todayDate.getDate()).padStart(2, '0');
 
                 fromDate = formatLocalDate(today, false);
                 toDate = formatLocalDate(today, true);
@@ -93,10 +93,10 @@
             document.getElementById("totalInvoices").innerText = data.totalInvoices || 0;
 
             const topHtml = (data.topProducts || []).map(p => `
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>${p.productName}</span><span>${p.quantitySold} sản phẩm</span>
-                </li>
-            `).join("") || "<li class='list-group-item'>Không có dữ liệu</li>";
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>${p.productName}</span><span>${p.quantitySold} sản phẩm</span>
+                            </li>
+                        `).join("") || "<li class='list-group-item'>Không có dữ liệu</li>";
             document.getElementById("topProducts").innerHTML = topHtml;
 
             const labels = (data.revenueByDate || []).map(d => new Date(d.date).toLocaleDateString());
@@ -141,7 +141,7 @@
                 r.addEventListener("change", toggleDateInputs)
             );
             toggleDateInputs();
-            @* fetchReport(); *@
+            fetchReport();
         });
     </script>
 }

@@ -218,7 +218,7 @@ public class ProductController : Controller
         var result = await _productDetailService.SearchByProductNameAsync(keyword);
         return Json(result);
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetDetailJson(int id)
     {
